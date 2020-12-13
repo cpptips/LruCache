@@ -3,17 +3,21 @@
 
 #include <iostream>
 
-using Entry = struct Entry {
+template <class KEY, class VAL>
+struct Entry {
    public:
-    Entry(int key = 0, int value = 0) : k(key), v(value){};
+    Entry(){};
 
-    int k;
-    int v;
+    KEY k;
+    VAL v;
     struct Entry* next = nullptr;
     struct Entry* prev = nullptr;
 };
 
+template <class KEY, class VAL>
 class LRUCache {
+    using Entry = Entry<KEY, VAL>;
+
    private:
     int _capacity;
     int _size;
@@ -52,7 +56,7 @@ class LRUCache {
         delete _tail;
     }
 
-    int get(int key) {
+    int get(KEY key) {
         Entry* p = _head->next;
         while (p->next) {
             if (p->k == key) {  //访问一次之后，把节点放在头部
@@ -64,7 +68,7 @@ class LRUCache {
         }
         return -1;
     }
-    bool set(int key, int value) {
+    bool set(KEY key, VAL value) {
         Entry* p = _head->next;
         while (p->next) {
             // 链表已经有了
@@ -84,7 +88,9 @@ class LRUCache {
         }
 
         // 新插入
-        p = new Entry(key, value);
+        p = new Entry();
+        p->k = key;
+        p->v = value;
         add_entry(p);
         _size++;
         return true;
