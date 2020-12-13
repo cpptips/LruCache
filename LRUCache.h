@@ -19,7 +19,7 @@ struct Entry {
 template <class KEY, class VAL>
 class LRUCache {
     using EntryPtr = Entry<KEY, VAL>*;
-    // using Entry = Entry<KEY, VAL>;
+    using EntryT = Entry<KEY, VAL>;
     struct Hash {
         size_t operator()(const EntryPtr& x) const {
             return std::hash<int>()(x->key());
@@ -58,8 +58,8 @@ class LRUCache {
     LRUCache(int capacity = 24) {
         _capacity = capacity;
         _size = 0;
-        _head = new Entry<KEY, VAL>();
-        _tail = new Entry<KEY, VAL>();
+        _head = new EntryT();
+        _tail = new EntryT();
         _head->next = _tail;
         _head->prev = nullptr;
         _tail->prev = _head;
@@ -77,7 +77,7 @@ class LRUCache {
 
     int get(KEY key) {
         // 通过hashtable来查找
-        auto it = _entriy_map.find(new Entry<KEY, VAL>(key));
+        auto it = _entriy_map.find(new EntryT(key));
         if (it == _entriy_map.end()) {
             return -1;
         }
@@ -87,7 +87,7 @@ class LRUCache {
         return p->v;
     }
     bool set(KEY key, VAL value) {
-        EntryPtr p = new Entry<KEY, VAL>(key);
+        EntryPtr p = new EntryT(key);
         auto it = _entriy_map.find(p);
         if (it != _entriy_map.end()) {  // cache hit
             (*it)->v = value;
